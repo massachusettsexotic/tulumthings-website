@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Build the cruise-port pages on tulumthings.com from the Things apps' own bundled data.
+"""RETIRED 23 Nov 2026: the cruise-port pages moved to portthings.com (~/portthings-website/tools/build_port_pages.py).
+Running this now only refreshes the redirect stubs (tools/write_port_redirects.py). Original notes below.
+
+Build the cruise-port pages on tulumthings.com from the Things apps own bundled data.
 
     python3 tools/build_port_pages.py            # rebuild every port page, hub, sitemap, robots
     python3 tools/build_port_pages.py --check    # also print a per-page summary
@@ -525,33 +528,11 @@ def sitemap(urls):
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}</urlset>\n'
 
 def main():
-    check = "--check" in sys.argv
-    store = store_cfg()
-    port_urls, count = [], 0
-    for cfg in APPS:
-        A = read_app(cfg["app"])
-        pages, tricks = build_model(cfg, A)
-        low = A["app"].lower()
-        slugs = [p["slug"] for p in pages]
-        assert len(set(slugs)) == len(slugs), f"duplicate slugs in {A['app']}: {slugs}"
-        for pg in pages:
-            wr(os.path.join(SITE, low, "ports", pg["slug"], "index.html"), render_port(cfg, A, pg, tricks, store, pages))
-            port_urls.append(f"{BASE}/{low}/ports/{pg['slug']}/"); count += 1
-            if check:
-                print(f'  {A["app"]:18} {pg["slug"]:22} places={len(pg["places"]):2} walk={pg["walkable"]:2} trips={len(pg["trips"])}/{pg["trip_total"]} '
-                      f'photos={sum(1 for p in pg["places"] if p["photo"])} osm={len(pg["extra"])}')
-        wr(os.path.join(SITE, low, "ports", "index.html"), render_hub(cfg, A, pages, store))
-        port_urls.append(f"{BASE}/{low}/ports/")
-        patched = patch_app_page(A["app"], pages)
-        print(f'{A["app"]}: {len(pages)} port pages, {len(tricks)} tricks{"" if patched else " (no app page to link from)"}')
-    # sitemap: root + every app page + every port page/hub (privacy mirrors are excluded: canonical lives on incmpltellc.com)
-    urls = [BASE + "/"]
-    for d in sorted(os.listdir(SITE)):
-        if os.path.exists(os.path.join(SITE, d, "index.html")) and not d.startswith("."): urls.append(f"{BASE}/{d}/")
-    urls += sorted(port_urls)
-    wr(os.path.join(SITE, "sitemap.xml"), sitemap(urls))
-    wr(os.path.join(SITE, "robots.txt"), f"User-agent: *\nAllow: /\n\nSitemap: {BASE}/sitemap.xml\n")
-    print(f"{count} port pages, {len(urls)} URLs in sitemap.xml")
+    # 23 Nov 2026: the port pages moved to portthings.com (generated there by tools/build_port_pages.py).
+    # Rebuilding the old pages here would put duplicate content back, so this now only refreshes the
+    # redirect stubs. The code above is kept for reference.
+    import runpy
+    runpy.run_path(os.path.join(SITE, "tools", "write_port_redirects.py"), run_name="__main__")
 
 if __name__ == "__main__":
     main()

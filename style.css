@@ -90,3 +90,8 @@ footer {
   padding-left: .9rem;
   margin-top: 2rem;
 }
+
+/* 23 Nov 2026: "Now part of Port Things" box on the app pages (tools/write_port_redirects.py) */
+.moved { background: var(--card, #f5f5f4); border: 1px solid var(--accent); border-radius: 14px; padding: 12px 16px; margin: 18px 0; }
+.moved p { margin: 4px 0; }
+.store { display: inline-block; background: var(--text, #1a1a1a); color: var(--bg, #fff); border-radius: 10px; padding: 6px 14px; font-weight: 600; text-decoration: none; }
